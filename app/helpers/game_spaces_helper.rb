@@ -1,0 +1,2 @@
+module GameSpacesHelper
+end

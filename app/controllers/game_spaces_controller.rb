@@ -1,0 +1,2 @@
+class GameSpacesController < ApplicationController
+end
