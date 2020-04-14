@@ -1,10 +1,10 @@
 class CreateGameSpaces < ActiveRecord::Migration[6.0]
   def change
     create_table :game_spaces do |t|
-      t.int :space_id
-      t.int :game_id
-      t.int :placement_order
-      t.int :rent_level
+      t.integer :space_id
+      t.integer :game_id
+      t.integer :placement_order
+      t.integer :rent_level, default: 1
 
       t.timestamps
     end

@@ -4,7 +4,7 @@ class CreateGames < ActiveRecord::Migration[6.0]
       t.string :game_name
       t.boolean :is_started
       t.boolean :is_finished
-      t.int :turn_count
+      t.integer :turn_count
 
       t.timestamps
     end

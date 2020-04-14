@@ -1,0 +1,2 @@
+Card.destroy_all
+Space.destroy_all
