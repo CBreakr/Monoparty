@@ -28,7 +28,7 @@ class Game < ApplicationRecord
     end
 
     def evaluate_roll(first_roll, second_roll)
-
+        
     end
 
     def add_player(player_id)

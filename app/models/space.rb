@@ -12,6 +12,12 @@ class Space < ApplicationRecord
         return nil
     end
 
+    def get_game_position(game)
+        game_spaces.find_by do |gs|
+            gs.game == game
+        end.placement_order
+    end
+
     #
     # define any space methods we want
     #

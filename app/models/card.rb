@@ -15,7 +15,8 @@ class Card < ApplicationRecord
     #
 
     def advance_to_go(game, player_game)
-        player_game.current_position = 1
+        go_space = game.spaces.find_by {|sp| sp.name == 'Advance to "Go"' }
+        player_game.current_position = go_space.get_game_position(game)
         player_game.money += 200
         player_game.save
         return nil
