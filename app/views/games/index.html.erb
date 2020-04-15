@@ -1,1 +1,13 @@
-I am the games home page
+<h1>All Games</h1>
+
+<%=form_for @game do |f|%>
+    <%=f.label :game_name%>
+    <%=f.text_field :game_name%>
+    <%=f.label :turn_count%>
+    <%=f.number_field :turn_count%>
+    <%=f.submit%>
+<%end%> 
+
+<%@games.each do |game|%>
+    <br><%=link_to game.game_name, game_path(game)%></br>
+<%end%> 

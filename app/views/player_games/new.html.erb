@@ -1,0 +1,10 @@
+<h1>Add Player</h1>
+
+<%=form_for @player_game do |f|%>
+    <%=f.label :game_id%>
+    <%=f.collection_select :game_id,Game.all,:id,:game_name%>
+    <%=f.label :player_id%>
+    <%=f.collection_select :player_id,Player.all,:id,:player_name%>
+    <%=f.submit%>
+
+<%end%> 
