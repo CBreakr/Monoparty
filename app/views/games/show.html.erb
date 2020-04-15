@@ -1,0 +1,10 @@
+<p><h1>Game Show Page</h1></p>
+
+<br><%=@game.game_name%></br>
+
+
+<%@game.players.each do |player|%>
+    <%=link_to player.player_name, player_path(player)%>
+<%end%>
+
+<%=button_to 'Add Player', new_player_game_path, method: :get%>

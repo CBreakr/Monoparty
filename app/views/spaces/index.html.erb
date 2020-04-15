@@ -1,0 +1,5 @@
+<h1>All Spaces</h1>
+
+<%@spaces.each do |space|%>
+    <br><%=link_to space.space_name, space_path(space)%></br>
+<%end%> 

@@ -1,0 +1,14 @@
+<h1>All Players</h1>
+
+<%=form_for @player do |f|%>
+    <%=f.label :player_name%>
+    <%=f.text_field :player_name%>
+    <%=f.submit%>
+
+<%end%> 
+
+
+
+<%@players.each do |player|%>
+    <br><%=link_to player.player_name, player_path(player)%></br>
+<%end%> 

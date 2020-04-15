@@ -1,0 +1,7 @@
+<p><h1>Player Show Page</h1></p>
+
+<br><%=@player.player_name%></br>
+
+<%@player.games.each do |game|%>
+    <%=link_to game.game_name, game_path(game)%>
+<%end%>
