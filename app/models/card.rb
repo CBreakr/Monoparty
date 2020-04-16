@@ -141,10 +141,10 @@ class Card < ApplicationRecord
         #Advance token to the nearest Railroad and pay owner twice 
         #the rental to which he/she is otherwise entitled.
         #If Railroad is unowned, you may buy it from the Bank.
-        rr_position = Space.find_by_name("Reading Railroad")
-        pr_position = Space.find_by_name("Pennsylvania Railroad")
-        bor_position = Space.find_by_name("B. & O. Railroad")
-        slr_position = Space.find_by_name("Short Line R.R")
+        rr_position = Space.find_by_name("Reading Railroad", game)
+        pr_position = Space.find_by_name("Pennsylvania Railroad", game)
+        bor_position = Space.find_by_name("B. & O. Railroad", game)
+        slr_position = Space.find_by_name("Short Line R.R", game)
         current_position = player_game.current_position
 
         if current_position < rr_position && pr_position && bor_position && slr_position

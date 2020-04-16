@@ -124,17 +124,22 @@ class Game < ApplicationRecord
         result.push({space: gs.space.space_name})
 
         if (gs.space.is_card? && gs.space.method_name)
-           byebug 
             puts "EVALUATE CARD SPACE"
 
             last_result = Card.run_from_space(self, gs, current_player_game)
             result.push(last_result)
 
-            # byebug
+            byebug
 
             if (last_result && last_result[:card_result]) then
-                #this mean we're supposed to re-evaluate again                
-                result.push(evaluate_space(current_player_game))
+                #this mean we're supposed to re-evaluate again     
+                next_gs = current_game_space(current_player_game.current_position)
+                # make extra sure we're not on the same spot, to avoid a loop
+                if gs.id != next_gs.id then
+                    next_result = evaluate_space(current_player_game)
+                    result.push(next_result)
+                    result.flatten
+                end
             end
         elsif (gs.space.is_property?)
             puts "WE'RE ON A PROPERTY"
