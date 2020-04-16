@@ -11,4 +11,23 @@ class PlayerGame < ApplicationRecord
             errors.add(:game_and_player, "not a valid addition")
         end
     end    
+
+    def take_money_away(amount)
+        amount_returned = amount
+        if self.money < amount then
+            amount_returned = self.money
+            self.update(money: 0, has_conceded: true)
+        else
+            self.update(money: self.money - amount)
+        end
+        return amount_returned
+    end
+
+    def give_money_away(amount)
+        amount_returned = amount
+        
+            self.update(money: self.money + amount)
+        end
+        return amount_returned
+    end
 end
