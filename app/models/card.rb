@@ -10,6 +10,7 @@ class Card < ApplicationRecord
             #do a test for now
             result = nil
             Card.transaction do
+                byebug 
                 result = next_card.card.run_own_method(game, player_game)
                 next_card.is_used = true
                 next_card.save!
@@ -41,9 +42,9 @@ class Card < ApplicationRecord
 
     # I think the game and player_game should be enough for any action
     def run_own_method(game, player_game)
-        # byebug
+        byebug
         if self.respond_to?(method_name) then
-            return send(method_name, game, player_game)
+            return self.send(method_name, game, player_game)
         end
         return nil
     end
@@ -187,11 +188,14 @@ class Card < ApplicationRecord
     def collect_twenty(player_game)
         player_game.money += 50
         player_game.save 
+        return nil 
     end 
 
-    def collect_ten(player_game)
+    def collect_ten(game,player_game)
+        byebug 
         player_game.money += 10
         player_game.save 
+        return nil
     end 
 
     def collect_fifty_from_all(player_game)
@@ -266,11 +270,12 @@ class Card < ApplicationRecord
     def go_to_jail(game, player_game)
         #need help with logic 
         #set jail space set player position to it set rolls remaining = 3
-        jail_position = Space.find_by_name("In Jail/Just Visiting",game)
-        player_game.current_position = jail_position  
+        byebug 
+        jail_space = Space.find_by_name("In Jail/Just Visiting",game)
+        player_game.current_position = jail_space.position  
         player_game.in_jail_rolls_remaining = 3
         player_game.save 
-        return nil 
+        return true 
     end 
 
     #bonus section 

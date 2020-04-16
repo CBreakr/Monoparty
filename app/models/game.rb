@@ -135,6 +135,7 @@ class Game < ApplicationRecord
                 #this mean we're supposed to re-evaluate again     
                 next_gs = current_game_space(current_player_game.current_position)
                 # make extra sure we're not on the same spot, to avoid a loop
+                byebug 
                 if gs.id != next_gs.id then
                     next_result = evaluate_space(current_player_game)
                     result.push(next_result)
