@@ -14,6 +14,12 @@ class Game < ApplicationRecord
 
     def get_sorted_spaces
         game_spaces.sort_by do |gs|
+            gs.position
+        end
+    end
+
+    def get_placement_spaces
+        game_spaces.sort_by do |gs|
             gs.placement_order
         end
     end
@@ -173,5 +179,10 @@ class Game < ApplicationRecord
         end
 
         nil
+    end
+
+    # oof, this one is weird
+    def get_spaces_in_display_order
+
     end
 end

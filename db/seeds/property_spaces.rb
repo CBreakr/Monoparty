@@ -4,7 +4,7 @@ Space.create!(space_name: 'St. James Place', space_cost: 90, rent_level1: 14, gr
 Space.create!(space_name: 'Illinois Avenue', space_cost: 120, rent_level1: 20, group: "red",space_type: "residential", default_position: 25)
 Space.create!(space_name: 'Kentucky Avenue', space_cost: 110, rent_level1: 18, group: "red",space_type: "residential", default_position: 22)
 Space.create!(space_name: 'Reading Railroad', space_cost: 100, rent_level1: 16, group: "orange",space_type: "residential", default_position: 6)
-Space.create!(space_name: 'New York Avenue', space_cost: 100, rent_level1: 25, group: "railroad",space_type: "railroad", default_position: 7)
+# Space.create!(space_name: 'New York Avenue', space_cost: 100, rent_level1: 25, group: "railroad",space_type: "railroad", default_position: 7)
 Space.create!(space_name: 'Connecticut Avenue', space_cost: 60, rent_level1: 8, group: "light-blue",space_type: "residential", default_position: 10)
 Space.create!(space_name: 'Indiana Avenue', space_cost: 110, rent_level1: 18, group: "red",space_type: "residential", default_position: 24)
 Space.create!(space_name: 'Pennsylvania Railroad', space_cost: 100, rent_level1: 25, group: "railroad",space_type: "railroad", default_position: 16)

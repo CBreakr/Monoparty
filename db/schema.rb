@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_15_165441) do
+ActiveRecord::Schema.define(version: 2020_04_16_050535) do
 
   create_table "card_games", force: :cascade do |t|
     t.integer "card_id"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 2020_04_15_165441) do
     t.integer "rent_level", default: 1
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "position"
   end
 
   create_table "games", force: :cascade do |t|
