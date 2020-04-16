@@ -27,7 +27,7 @@ class PlayerGame < ApplicationRecord
         amount_returned = amount
         
             self.update(money: self.money + amount)
-        end
+    
         return amount_returned
     end
 end

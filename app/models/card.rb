@@ -5,7 +5,7 @@ class Card < ApplicationRecord
     def self.run_from_space(game, game_space, player_game)
         # byebug
         next_card = get_next_card(game, game_space.space.space_type)
-        # byebug
+        byebug
         if next_card then
             #do a test for now
             result = nil
@@ -219,19 +219,22 @@ class Card < ApplicationRecord
 
 
     def pay_fifty_to_all(player_game)
-        all = player_game.game.players.count * 50
-        player_game.money -= all 
-        player_game.save 
         #need logic to give 50 to each player 
         PlayerGame.all.each do |pg|
-            pg.give_money_away(50)
-            pg.save 
+            if pg.id != player_game.id
+                amount = player_game.take_money_away(50)
+                pg.money += amount 
+                pg.save 
+                if amount < 50 
+                    break 
+                end 
+            end 
         end 
     end 
     
     def repairs(player_game)
         all = player_game.player.properties.count * 25
-        player_game.money -= all 
+        player_game.take_money_away(all)
         player_game.save 
 
     end 

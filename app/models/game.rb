@@ -124,6 +124,7 @@ class Game < ApplicationRecord
         result.push({space: gs.space.space_name})
 
         if (gs.space.is_card? && gs.space.method_name)
+           byebug 
             puts "EVALUATE CARD SPACE"
 
             last_result = Card.run_from_space(self, gs, current_player_game)
