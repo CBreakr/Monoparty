@@ -6,7 +6,7 @@
     <br />
     <% game.player_games.each do |pg| %>
         <% if !pg.has_conceded && pg.current_position == gs.position %>
-            <span class="player_piece" style="color: white; border: 1px solid black; display: inline-block; height:2vh; width: 2vh; background-color:blue">
+            <span class="player_piece" style="color: white; border: 1px solid black; display: inline-block; height:2vh; width: 2vh; background-color:<%= pg.color %>">
                 <%= pg.turn_order %>
             </span>
         <% end%>

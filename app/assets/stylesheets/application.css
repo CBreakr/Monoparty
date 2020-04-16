@@ -63,3 +63,7 @@ input[type="submit"]:hover {
     grid-template-columns: 3fr 1fr;
     grid-gap: 4px;
 }
+
+.attribution {
+    font-size: 8px;
+}

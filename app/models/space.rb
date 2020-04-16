@@ -18,6 +18,14 @@ class Space < ApplicationRecord
         end.placement_order
     end
 
+    def is_property?
+        return space_type == "residential" || space_type == "utility" || space_type == "railroad"
+    end
+
+    def is_card?
+        return space_type == "chance" || space_type == "community_chest"
+    end
+
     #
     # define any space methods we want
     #

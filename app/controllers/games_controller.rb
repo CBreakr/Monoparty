@@ -53,8 +53,10 @@ class GamesController < ApplicationController
             session[:first_roll] = first_roll
             session[:second_roll] = second_roll
 
-            @game.evaluate_roll(first_roll, second_roll)
+            ret_hash = @game.evaluate_roll(first_roll, second_roll)
             @game.save
+
+            flash.merge!(ret_hash)
 
             # for now, for the purpose of testing
             @game.end_the_turn

@@ -41,6 +41,24 @@ with info panels for the different players
                     <%= render partial: "spaces/display_space_cell", locals: {game: @game, gs: display_spaces[count-1], border_side: "right", size_style: "height:6.5vh;"} %>
                     <% count += 1 %>
                     <td colspan="<%= side_length-2 %>" rowspan="<%= side_length-2 %>">                    
+                        <% if flash[:first_roll] then %>
+                            <div>First: <%= flash[:first_roll] %>, Second: <%= flash[:second_roll] %></div>
+                        <% end %>
+                        <% if flash[:result] then %>
+                            <% flash[:result].each do |result| %>
+                                <% if result.has_key?("space") then %>
+                                    <div>
+                                        <%= result["space"] %>
+                                    </div>
+                                <% end %>
+
+                                <% if result.has_key?("card") %>
+                                    <div>
+                                        <%= result["card"] %>
+                                    </div>
+                                <% end %>                          
+                            <% end %>  
+                        <% end %>
                         <%= button_to "Roll Dice", roll_dice_path(@game) %>
                     </td>
                     <%= render partial: "spaces/display_space_cell", locals: {game: @game, gs: display_spaces[count-1], border_side: "left", size_style: "height:6.5vh;"} %>
@@ -76,14 +94,7 @@ with info panels for the different players
         </p>
 
         <% @game.sorted_player_games.each do |pg| %>
-            <p class = "distinct">
-                <% if pg.is_current_turn %>
-                CURRENT TURN
-                <br />
-                <% end %>
-                <% if pg.has_conceded %>
-                OUT OF THE GAME
-                <% end %>
+            <p class = "distinct" style="border-left: 10px solid <%= pg.color %>;<%= pg.has_conceded ? "opacity: 0.2;" : "" %><%= pg.is_current_turn ? "color:purple;" : "" %>">
                 <%= pg.player.player_name %>
                 <br />
                 <%= pg.turn_order %>
@@ -94,4 +105,8 @@ with info panels for the different players
             </p>
         <% end %>
     </div>
+</div>
+
+<div class="attribution">
+    Dice Icons by Delapouite under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>
 </div>

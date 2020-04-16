@@ -31,7 +31,10 @@ class Game < ApplicationRecord
         Game.transaction do
             # get the spaces
             GameSpace.create_default_setup(self)
+            CardGame.create_default_setup(self)
             # GameCard.create_default_setup(self)
+            shuffle_cards("chance")
+            shuffle_cards("community_chest")
             save
         end
     end
@@ -50,6 +53,16 @@ class Game < ApplicationRecord
                 pg.turn_order = order
                 pg.money = 1500
                 pg.current_position = 1
+                case order
+                when 1
+                    pg.color = "red"
+                when 2
+                    pg.color = "blue"
+                when 3
+                    pg.color = "green"
+                when 4
+                    pg.color = "yellow"
+                end
                 pg.save!
                 order += 1
             end
@@ -64,34 +77,83 @@ class Game < ApplicationRecord
 
         param.each do |card_quant|
             card_quant.quantity.times do |i|
-
+                # CardGames.create
             end
         end
     end
 
+    #
+    #
+    #
     def evaluate_roll(first_roll, second_roll)
         #for now just moving the piece and nothing else
         total = first_roll + second_roll
 
         player_game = get_current_player_game
 
-        next_position = player_game.current_position + total
+        result = move_player(total, player_game)
+        # byebug
+        return {first_roll: first_roll, second_roll: second_roll, result: result}
+    end
+
+    #
+    #
+    #
+    def move_player(total, current_player_game)
+        next_position = current_player_game.current_position + total
         next_position %= (self.spaces.count)
 
         if next_position == 0 then
             next_position = self.spaces.count
-        end        
-
-        # for now give a random money amount
-        player_game.update(current_position: next_position, money: (rand 1..10000))
-
-        if rand > 0.90 then
-            player_game.update(money: 0, has_conceded: true)
         end
 
-        nil
+        current_player_game.current_position = next_position
+
+        result = evaluate_space(current_player_game)
+        return result
     end
 
+    #
+    #
+    #
+    def evaluate_space(current_player_game)
+        result = []
+
+        gs = current_game_space(current_player_game.current_position)
+
+        result.push({space: gs.space.space_name})
+
+        if (gs.space.is_card? && gs.space.method_name)
+            puts "EVALUATE CARD SPACE"
+
+            last_result = Card.run_from_space(self, gs, current_player_game)
+            result.push(last_result)
+
+            # byebug
+
+            if (last_result && last_result[:card_result]) then
+                #this mean we're supposed to re-evaluate again                
+                result.push(evaluate_space(current_player_game))
+            end
+        elsif (gs.space.is_property?)
+            puts "WE'RE ON A PROPERTY"
+        end
+
+        current_player_game.save
+
+        result
+    end
+
+    #
+    #
+    #
+    def current_game_space(position)
+        game_spaces.find {|gs| gs.position == position }
+    end
+
+    #
+    #
+    #
     def get_current_actions_list
         # based on the current state of everything, determine the actions for the player
     end
@@ -181,8 +243,18 @@ class Game < ApplicationRecord
         nil
     end
 
-    # oof, this one is weird
-    def get_spaces_in_display_order
-
+    def shuffle_cards(card_type)
+        CardGame.transaction do
+            order = 1
+            self.card_games.filter do |cg|
+                cg.card.card_type == card_type
+            end.shuffle.each do |cg|
+                cg.deck_order = order
+                cg.is_used = false
+                order += 1
+                cg.save!
+            end
+        end
     end
+
 end
