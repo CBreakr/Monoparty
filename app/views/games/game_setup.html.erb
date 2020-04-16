@@ -1,0 +1,30 @@
+<h1>Game Setup</h1>
+
+<h3>
+    Name: <%= @game.game_name %>
+</h3>
+
+<h3>
+Current Players
+</h3>
+<ul>
+    <%@game.players.each do |player|%>
+        <li>
+            <%=link_to player.player_name, player_path(player)%>
+        </li>
+    <%end%>
+</ul>
+
+<% if @game.players.count < 4 then %>
+    <h3>Add New Players</h3>
+    <%= form_for @player_game do |fb| %>
+        <%= fb.hidden_field :game_id %>
+        <%= fb.label :player_id %>
+        <%= fb.collection_select :player_id, @players_not_in_game, :id, :player_name %>
+        <%= fb.submit %>
+    <% end %>
+<% end %>
+
+<% if @game.players.count >= 2 then %>
+    <%= button_to "Start Game", start_game_path(@game) %>
+<% end %>

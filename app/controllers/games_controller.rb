@@ -7,17 +7,24 @@ class GamesController < ApplicationController
     end
 
     def show
-        if @game.is_started then
+        if @game.is_finished then
+            render :finished_game        
+        elsif @game.is_started then
             render :active_game
-        elsif @game.is_finished then
-            render :finished_game
         else
+            @players_not_in_game = Player.all.filter do |p|
+                !@game.players.include?(p)
+            end
+            @player_game = PlayerGame.new
+            @player_game.game = @game
             render :game_setup
         end
     end
 
     def create
-        game = Game.new.setup_game(game_params[:game_name])
+        # game = Game.new.setup_game(game_params[:game_name])
+        game = Game.new
+        game.setup(game_params[:game_name])
         redirect_to game_path(game)
     end
 
@@ -33,8 +40,8 @@ class GamesController < ApplicationController
     end
 
     def start
-        @game.is_started = true
-        @game.save
+        # does this not work automatically?
+        @game.start
         redirect_to game_path(@game)
     end
 
@@ -48,6 +55,9 @@ class GamesController < ApplicationController
 
             @game.evaluate_roll(first_roll, second_roll)
             @game.save
+
+            # for now, for the purpose of testing
+            @game.end_the_turn
         end
 
         redirect_to game_path(@game)
@@ -69,7 +79,7 @@ class GamesController < ApplicationController
 
     def end_turn
         if @game.is_active then
-            @game.check_end_condition
+            @game.end_the_turn
         end
         redirect_to game_path(@game)
     end
@@ -77,7 +87,7 @@ class GamesController < ApplicationController
     private
 
     def game_params
-        params.require(:game).permit(:game_name, :cards[:card_id, :quantity])
+        params.require(:game).permit(:game_name)
     end
 
     def get_game

@@ -1,2 +1,7 @@
+Game.destroy_all
+PlayerGame.destroy_all
+GameSpace.destroy_all
+CardGame.destroy_all
+Property.destroy_all
 Card.destroy_all
 Space.destroy_all

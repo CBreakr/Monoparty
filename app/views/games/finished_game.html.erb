@@ -1,0 +1,13 @@
+<h1><%= @game.game_name %> is completed</h1>
+
+<%= @game.winner.player.player_name %> is the winner!
+<br />
+<%= @game.turn_count-1 %> turns completed
+
+<ul>
+<% @game.player_games.each do |pg| %>
+    <li>
+    <%= pg.player.player_name %> : $<%= pg.money %>
+    </li>
+<% end %>
+</ul>
