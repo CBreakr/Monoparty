@@ -32,7 +32,8 @@ class Space < ApplicationRecord
     end 
 
     def self.find_by_name(name,game)
-        game.game_spaces.find_by{|gs| gs.space.space_name == name}
+        byebug
+        game.game_spaces.find {|gs| gs.space.space_name == name}
     end 
 
     def self.does_pass_go?(name,game,player_game)
@@ -60,6 +61,17 @@ class Space < ApplicationRecord
         player_game.save 
         return true 
     end 
+
+    def self.advance_to_card(game, player_game)
+        # find ANY card space
+        # set the player's position
+
+        card_space = game.game_spaces.shuffle.find do |gs|
+            gs.space.space_type == "community_chest" || gs.space.space_type == "chance"
+        end
+
+        player_game.current_position = card_space.position
+    end
 
     
     def super_good(player_game)

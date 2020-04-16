@@ -107,7 +107,9 @@ class Game < ApplicationRecord
             next_position = self.spaces.count
         end
 
-        current_player_game.current_position = next_position
+        # current_player_game.current_position = next_position
+
+        Space.advance_to_card(self, current_player_game)
 
         result = evaluate_space(current_player_game)
         return result
@@ -133,6 +135,9 @@ class Game < ApplicationRecord
 
             if (last_result && last_result[:card_result]) then
                 #this mean we're supposed to re-evaluate again     
+
+                byebug
+
                 next_gs = current_game_space(current_player_game.current_position)
                 # make extra sure we're not on the same spot, to avoid a loop
                 byebug 

@@ -12,6 +12,7 @@ class Card < ApplicationRecord
             Card.transaction do
                 byebug 
                 result = next_card.card.run_own_method(game, player_game)
+                byebug
                 next_card.is_used = true
                 next_card.save!
             end
@@ -84,10 +85,14 @@ class Card < ApplicationRecord
     end 
 
     def advance_to_boardwalk(game, player_game)
-        boardwalk_position = Space.find_by_name("Boardwalk",game)
-        if does_pass_go?("Boardwalk",game,player_game)
+        byebug
+        boardwalk_position = Space.find_by_name("Boardwalk", game)
+        if Space.does_pass_go?("Boardwalk",game,player_game)
+            byebug
             player_game.money += 200 
         end 
+
+        byebug
 
         player_game.current_position = boardwalk_position 
         player_game.save 
@@ -142,13 +147,14 @@ class Card < ApplicationRecord
         #Advance token to the nearest Railroad and pay owner twice 
         #the rental to which he/she is otherwise entitled.
         #If Railroad is unowned, you may buy it from the Bank.
+
         rr_position = Space.find_by_name("Reading Railroad", game)
         pr_position = Space.find_by_name("Pennsylvania Railroad", game)
         bor_position = Space.find_by_name("B. & O. Railroad", game)
         slr_position = Space.find_by_name("Short Line R.R", game)
         current_position = player_game.current_position
 
-        if current_position < rr_position && pr_position && bor_position && slr_position
+        if current_position < rr_position.position && pr_position && bor_position && slr_position
             current_position = rr_position
         elsif current_position < pr_position && bor_position && slr_position
             current_position = pr_position
@@ -161,7 +167,7 @@ class Card < ApplicationRecord
     end 
 
     def collect_twohun(player_game)
-       player_game.money += 200
+        player_game.money += 200
         player_game.save 
     end 
 
@@ -243,11 +249,12 @@ class Card < ApplicationRecord
 
     end 
     
-    def pay_fourty(player_game)
+    def pay_fourty(game, player_game)
+        byebug
         p_cost = player_game.player.properties.count * 40
         player_game.take_money_away(p_cost)
         player_game.save 
-        
+        return nil
     end 
 
     
@@ -256,9 +263,11 @@ class Card < ApplicationRecord
         player_game.save 
     end 
 
-    def pay_fifteen(player_game)
+    def pay_fifteen(game, player_game)
+        byebug
         player_game.take_money_away(15)
         player_game.save 
+        return nil
     end 
 
     
