@@ -6,8 +6,8 @@ class Space < ApplicationRecord
 
     # I think the game and player_game should be enough for any action
     def run_own_method(game, player_game)
-        if self.respond_to?(method_name) then
-            return send(method_name, game, player_game)
+        if self.respond_to?(method_name) then # built-in method that searches the instance
+            return send(method_name, game, player_game) # built-in method that calls method_name(game, player_game)
         end
         return nil
     end
@@ -132,14 +132,12 @@ class Space < ApplicationRecord
     def income_tax(game, player_game)
         player_game.take_money_away(200)
         player_game.save 
-        byebug
         return nil 
     end 
 
     def luxury_tax(game, player_game)
         player_game.take_money_away(100)
         player_game.save 
-        byebug
         return nil 
     end 
 
@@ -172,14 +170,15 @@ class Space < ApplicationRecord
         end
     end
     
-    def super_good(player_game)
+    def super_good(game, player_game)
         player_game.money += 1000
         player_game.save 
+        return nil
     end 
 
-    def super_bad(player_game)
+    def super_bad(game, player_game)
         player_game.take_money_away(1000)
-        player_game.save 
+        return nil
     end 
 
     #

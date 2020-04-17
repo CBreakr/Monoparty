@@ -296,7 +296,6 @@ class Card < ApplicationRecord
     end 
     
     def pay_fourty(game, player_game)
-        byebug
         p_cost = player_game.player.properties.count * 40
         player_game.take_money_away(p_cost)
         return nil
