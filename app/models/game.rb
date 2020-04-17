@@ -7,7 +7,7 @@ class Game < ApplicationRecord
     has_many :cards, through: :card_games 
     has_many :properties
 
-    TURN_LIMIT = 10
+    TURN_LIMIT = 50
 
     def is_active
         !(@is_started || @is_finished)

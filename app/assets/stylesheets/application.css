@@ -156,3 +156,14 @@ input[type="submit"]:hover {
 .has_hover:hover .hidden_hover {
     visibility: visible;
 }
+
+.sale_option {
+    margin: 2px;
+    padding: 2px;
+}
+
+.sell_form_container {
+    border: 1px solid black;
+    font-size: 14px;
+    padding: 4px;
+}

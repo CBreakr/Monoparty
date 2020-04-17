@@ -91,12 +91,10 @@ class Space < ApplicationRecord
         player_pos = player_game.current_position
         
         if player_pos < target_position && go_position > player_pos && go_position < target_position
-            byebug
             return true 
         end 
         
         if player_pos > target_position && (go_position > player_pos || go_position < target_position) 
-            byebug
             return true 
         end 
 
@@ -132,7 +130,6 @@ class Space < ApplicationRecord
     end 
     
     def income_tax(game, player_game)
-        byebug
         player_game.take_money_away(200)
         player_game.save 
         byebug
@@ -140,7 +137,6 @@ class Space < ApplicationRecord
     end 
 
     def luxury_tax(game, player_game)
-        byebug
         player_game.take_money_away(100)
         player_game.save 
         byebug
