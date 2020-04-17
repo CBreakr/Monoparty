@@ -10,5 +10,10 @@ Space.create!(space_name: 'Go To Jail', space_cost: nil, rent_level1: nil,group:
 Space.create!(space_name: 'Community Chest', space_cost: nil, rent_level1: nil,group: nil,space_type:"community_chest", default_position: 34, method_name: "")
 Space.create!(space_name: 'Chance', space_cost: nil, rent_level1: nil,group: nil,space_type:"chance", default_position: 37, method_name: "")
 Space.create!(space_name: 'Luxury Tax (pay $100)', space_cost: nil, rent_level1: nil,group: nil,space_type:"tax", default_position: 39, method_name: "luxury_tax")
+# Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 41, method_name: "super_bad")
+# Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 42, method_name: "super_bad")
+# Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 43, method_name: "super_good")
+# Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 44, method_name: "super_good")
+
 
 

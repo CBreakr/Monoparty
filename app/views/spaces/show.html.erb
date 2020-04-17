@@ -1,6 +1,8 @@
 <p><h1>Space Show Page</h1></p>
 
 <br><%=@space.space_name%></br>
-<br><small>Cost to Buy: <%=@space.space_cost%></small></br>
-<small>Rent: <%=@space.rent_level1%></small>
+<%if @space.space_cost != nil%>
+    <br><small>Cost to Buy: <%=@space.space_cost%></small></br>
+    <small>Rent: <%=@space.rent_level1%></small>
+<%end%>
 

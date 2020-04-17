@@ -1,4 +1,4 @@
-<h1>All Players</h1>
+<h1>Players</h1>
 
 <%=form_for @player do |f|%>
     <%=f.label :player_name%>
@@ -8,7 +8,11 @@
 <%end%> 
 
 
+<%@players.top_players.each_with_index do |tp,index|%>
+    <p>
+    <b>Rank: <%=index + 1%></b>
+    <%=link_to tp.player_name, player_path(tp)%>
+    <small>wins: <%=tp.player_wins%></small>
+    </p>
+<%end%>
 
-<%@players.each do |player|%>
-    <br><%=link_to player.player_name, player_path(player)%></br>
-<%end%> 

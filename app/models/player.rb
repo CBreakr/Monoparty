@@ -28,4 +28,17 @@ class Player < ApplicationRecord
         end
         return amount_returned
     end
+
+    def self.top_players 
+
+        tp = self.all.sort_by{|player|player.player_wins}.reverse
+        
+
+    end 
+
+    def player_wins
+        #byebug
+        self.player_games.filter{|pg|pg.is_winner?}.count
+    end 
+
 end

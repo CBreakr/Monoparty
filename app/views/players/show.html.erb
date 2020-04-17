@@ -1,7 +1,15 @@
 <p><h1>Player Show Page</h1></p>
-
-<br><%=@player.player_name%></br>
-
-<%@player.games.each do |game|%>
-    <%=link_to game.game_name, game_path(game)%>
+<br>
+<h2><%=@player.player_name%></h2>
+<br>
+<p>Total Games: <%=@player.player_games.count%></p>
+<p>Total Wins: <%=@player.player_games.filter{|pg|pg.is_winner?}.count%></p>
+<br>
+<p>List of Games: <%@player.player_games.each do |pg|%></p>
+    <small><%=link_to pg.game.game_name, game_path(pg.game)%></small>
 <%end%>
+
+
+
+
+
