@@ -72,6 +72,39 @@ class Space < ApplicationRecord
         player_game.current_position = card_space.position
     end
 
+    def land_on_go(game,player_game)
+            player_game.money += 200
+            player_game.save 
+            return nil 
+        end 
+    
+    end 
+    
+    def income_tax(game, player_game)
+            byebug
+            player_game.take_money_away(200)
+            player_game.save 
+            return nil 
+    end 
+
+    def luxury_tax(game, player_game)
+        byebug
+        player_game.take_money_away(100)
+        player_game.save 
+        return nil 
+end 
+
+    def go_to_jail(game, player_game)
+        #need help with logic 
+        #set jail space set player position to it set rolls remaining = 3
+        byebug 
+        jail_space = Space.find_by_name("In Jail/Just Visiting",game)
+        player_game.current_position = jail_space.position  
+        player_game.in_jail_rolls_remaining = 3
+        player_game.save 
+        return true 
+    end 
+
     
     def super_good(player_game)
         player_game.money += 1000
