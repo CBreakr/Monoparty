@@ -92,7 +92,18 @@ class Game < ApplicationRecord
 
         player_game = get_current_player_game
 
-        result = move_player(total, player_game)
+        result = nil
+
+        if player_game.in_jail_rolls_remaining > 0 then
+            if first_roll == second_roll then
+                result = player_game.get_out_of_jail(0)
+            else
+                result = player_game.process_jail
+            end
+        else
+            result = move_player(total, player_game)
+            # result = player_game.go_to_jail
+        end
 
         if player_game.has_conceded then
             result.push({loser: "#{player_game.player.player_name} has lost"})
@@ -272,6 +283,16 @@ class Game < ApplicationRecord
 
     def choose_to_sell_property(inner_params)
         return [{sell: true}]
+    end
+
+    def pay_jail_fine(inner_params)
+        pg = get_current_player_game
+        return pg.pay_jail_fine
+    end
+
+    def use_jail_card(inner_params)
+        pg = get_current_player_game
+        return pg.use_jail_card
     end
 
     def end_the_turn(inner_params)

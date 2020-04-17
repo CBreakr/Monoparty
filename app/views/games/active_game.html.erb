@@ -145,11 +145,11 @@ with info panels for the different players
                     <div>
                         <%= pg.player.player_name %>
                         <br />
-                        <%= pg.turn_order %>
-                        <br />
                         $<%= pg.money %>
                         <br />
-                        <%= pg.current_position%>
+                        <% if pg.in_jail_rolls_remaining > 0 %>
+                            In Jail! (<%= pg.in_jail_rolls_remaining %> turns remaining)
+                        <% end %>
                     </div>
                     <div>
                         <% pg.player.properties.filter do |prop|
