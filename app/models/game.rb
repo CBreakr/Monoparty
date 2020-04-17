@@ -5,6 +5,7 @@ class Game < ApplicationRecord
     has_many :players, through: :player_games
     has_many :card_games 
     has_many :cards, through: :card_games 
+    has_many :properties
 
     TURN_LIMIT = 10
 
@@ -92,8 +93,16 @@ class Game < ApplicationRecord
         player_game = get_current_player_game
 
         result = move_player(total, player_game)
+
+        if player_game.has_conceded then
+            result.push({loser: "#{player_game.player.player_name} has lost"})
+        end
+
+        result.push({first_roll: first_roll})
+        result.push({second_roll: second_roll})
+
         # byebug
-        return {first_roll: first_roll, second_roll: second_roll, result: result}
+        return result
     end
 
     #
@@ -107,9 +116,9 @@ class Game < ApplicationRecord
             next_position = self.spaces.count
         end
 
-        # current_player_game.current_position = next_position
+        current_player_game.current_position = next_position
 
-        Space.advance_to_card(self, current_player_game)
+        # Space.advance_to_card(self, current_player_game)
 
         result = evaluate_space(current_player_game)
         return result
@@ -128,6 +137,9 @@ class Game < ApplicationRecord
         if (gs.space.is_card? && gs.space.method_name)
             puts "EVALUATE CARD SPACE"
 
+            #no cards for now, just spaces
+            return result
+
             last_result = Card.run_from_space(self, gs, current_player_game)
             result.push(last_result)
 
@@ -142,18 +154,21 @@ class Game < ApplicationRecord
                 # make extra sure we're not on the same spot, to avoid a loop
                 byebug 
                 if gs.id != next_gs.id then
+                    byebug
                     next_result = evaluate_space(current_player_game)
-                    result.push(next_result)
-                    result.flatten
+                    result.push(next_result) if next_result
                 end
             end
-        elsif (gs.space.is_property?)
-            puts "WE'RE ON A PROPERTY"
+        else 
+            # OK, how do we do the buy/rent/etc options
+            next_result = gs.space.process_space(self, current_player_game)
+            # byebug
+            result.push(next_result) if next_result
         end
 
         current_player_game.save
 
-        result
+        result.flatten
     end
 
     #
@@ -164,12 +179,48 @@ class Game < ApplicationRecord
     end
 
     #
-    #
-    #
-    def get_current_actions_list
-        # based on the current state of everything, determine the actions for the player
+    def set_sell_options
+        pg = get_current_player_game
+        if pg.player.properties.filter do |prop| 
+            prop.game_id == self.id 
+        end.count > 0 then
+            return {actions: [
+                    {
+                        text: "sell property?", 
+                        method_name:"choose_to_sell_property", 
+                        params: {placeholder: ""}                        
+                    },
+                    {
+                        text: "end the turn",
+                        method_name: "end_the_turn",
+                        params: {placeholder: ""}
+                    }
+                ]
+            }
+        else
+            return {actions: [
+                {
+                    text: "end the turn",
+                    method_name: "end_the_turn",
+                    params: {placeholder: ""}
+                }
+            ]
+        }
+        end
     end
 
+    #
+    def run_action(params)
+        method_name = params["method_name"]
+        inner_params = params["inner"]
+
+        #that should be all that I need
+        if self.respond_to?(method_name) then
+            return send(method_name, inner_params)
+        end
+    end
+
+    #
     def get_current_player_game
         self.player_games.find do |pg|
             pg.is_current_turn
@@ -208,7 +259,28 @@ class Game < ApplicationRecord
         next_player
     end
 
-    def end_the_turn
+    def buy_property(inner_params)
+        # the inner_params should have the space_id
+        space_id = inner_params["space_id"]
+        return [Space.attempt_to_buy(space_id, get_current_player_game)]
+    end
+
+    def skip_to_sell(inner_params)
+        # nothing to do here
+        return nil
+    end
+
+    def choose_to_sell_property(inner_params)
+        byebug
+
+        # list out the properties to sell
+        # really, we need to display a form
+
+        return nil
+    end
+
+    def end_the_turn(inner_params)
+
         player_game = get_current_player_game
         next_player_game = get_next_player_game(player_game.turn_order)
         player_game.is_current_turn = false
@@ -225,6 +297,7 @@ class Game < ApplicationRecord
         end
 
         check_end_condition
+        return [{turn_end: "true"}]
     end
 
     def check_end_condition
