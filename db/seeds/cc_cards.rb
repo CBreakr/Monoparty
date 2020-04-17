@@ -14,5 +14,5 @@ Card.create!(card_name: 'School fees.', card_text: 'Pay $50', card_type: 'commun
 Card.create!(card_name: 'Receive $25 consultancy fee.', card_text: 'Collect $25', card_type: 'community_chest', method_name: "collect_twenty_five", default_quantity: 1)
 Card.create!(card_name: 'You are assessed for street repairs:', card_text: 'Pay $40 per house and $115 per hotel you own.', card_type: 'community_chest', method_name: "pay_fourty", default_quantity: 1)
 Card.create!(card_name: 'You have won second prize in a beauty contest.', card_text: 'Collect $10', card_type: 'community_chest', method_name: "collect_ten", default_quantity: 1)
-Card.create!(card_name: 'Super Good Card.', card_text: 'Add 4 Super Good Spaces to Monoparty', card_type: 'community_chest', method_name: "super_good", default_quantity: 1)
-Card.create!(card_name: 'Super Bad Card.', card_text: 'Add 4 Super Bad Spaces to Monoparty', card_type: 'community_chest', method_name: "super_bad", default_quantity: 1)
+# Card.create!(card_name: 'Super Good Card.', card_text: 'Add 4 Super Good Spaces to Monoparty', card_type: 'community_chest', method_name: "super_good", default_quantity: 1)
+# Card.create!(card_name: 'Super Bad Card.', card_text: 'Add 4 Super Bad Spaces to Monoparty', card_type: 'community_chest', method_name: "super_bad", default_quantity: 1)

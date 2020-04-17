@@ -46,13 +46,13 @@ with info panels for the different players
                         <% end %>
                         <% if flash[:result] then %>
                             <% flash[:result].each do |result| %>
-                                <% if result.has_key?("space") then %>
+                                <% if result && result.is_a?(Hash) && result.has_key?("space") then %>
                                     <div>
                                         <%= result["space"] %>
                                     </div>
                                 <% end %>
 
-                                <% if result.has_key?("card") %>
+                                <% if result && result.is_a?(Hash) && result.has_key?("card") %>
                                     <div>
                                         <%= result["card"] %>
                                     </div>

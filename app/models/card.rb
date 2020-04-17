@@ -15,6 +15,7 @@ class Card < ApplicationRecord
                 byebug
                 next_card.is_used = true
                 next_card.save!
+                byebug
             end
             return {card: next_card.card.card_name, card_result: result}
         end
@@ -57,8 +58,16 @@ class Card < ApplicationRecord
     
     
     
-    def go_back_three(player_game)
-        player_game.current_position -= 3
+    def go_back_three(game, player_game)
+        if player_game.current_position == 1
+            player_game.current_position = 38
+        elsif player_game.current_position == 2 
+            player_game.current_position = 39
+        elsif player_game.current_position == 3 
+            player_game.current_position = 40 
+        else  
+            player_game.current_position -= 3
+        end 
         player_game.save 
         return true 
         #check logic 
@@ -67,15 +76,14 @@ class Card < ApplicationRecord
     def advance_to_go(game, player_game)
         
         player_game.current_position = Space.get_go_position(game)
-        player_game.money += 200
         player_game.save
-        return nil
+        return true 
     end
 
     def advance_to_r_r(game, player_game)
         #need if you pass readingrailroad collect 200 logic 
-        r_r_position = Space.find_by_name("Reading Railroad",game)
-        if does_pass_go?("Reading Railroad",game,player_game)
+        r_r_position = Space.find_by_name("Reading Railroad",game).position 
+        if Space.does_pass_go?("Reading Railroad",game,player_game)
             player_game.money += 200 
         end 
 
@@ -85,8 +93,9 @@ class Card < ApplicationRecord
     end 
 
     def advance_to_boardwalk(game, player_game)
+        #comparison of Integer with GameSpace failed
         byebug
-        boardwalk_position = Space.find_by_name("Boardwalk", game)
+        boardwalk_position = Space.find_by_name("Boardwalk",game).position 
         if Space.does_pass_go?("Boardwalk",game,player_game)
             byebug
             player_game.money += 200 
@@ -94,7 +103,7 @@ class Card < ApplicationRecord
 
         byebug
 
-        player_game.current_position = boardwalk_position 
+        player_game.current_position = boardwalk_position
         player_game.save 
         return true 
         
@@ -102,8 +111,8 @@ class Card < ApplicationRecord
     
     def advance_to_illinois_ave(game, player_game)
         #need if you pass go collect 200 logic 
-        illinois_ave_position = Space.find_by_name("Illinois Avenue",game)
-        if does_pass_go?("Illinois Avenue",game,player_game)
+        illinois_ave_position = Space.find_by_name("Illinois Avenue",game).position 
+        if Space.does_pass_go?("Illinois Avenue",game,player_game)
             player_game.money += 200 
         end 
 
@@ -115,10 +124,12 @@ class Card < ApplicationRecord
 
     def advance_to_st_charles_place(game, player_game)
         #need if you pass go collect 200 logic 
-        st_charles_place_position = Space.find_by_name("St. Charles Place",game)
-        if does_pass_go?("St. Charles Place",game,player_game)
+        st_charles_place_position = Space.find_by_name("St. Charles Place",game).position 
+        byebug 
+        if Space.does_pass_go?("St. Charles Place",game,player_game)
             player_game.money += 200 
         end 
+        byebug 
 
         player_game.current_position = st_charles_place_position 
         player_game.save 
@@ -129,70 +140,75 @@ class Card < ApplicationRecord
     def nearest_utility(game, player_game)
         #if unowned, you may buy it from the Bank. 
         #If owned, throw dice and pay owner a total 10 times the amount thrown.
-        w_w_position = Space.find_by_name("Water Works")
-        e_c_position = Space.find_by_name("Electric Company")
+        w_w_position = Space.find_by_name("Water Works",game).position
+        e_c_position = Space.find_by_name("Electric Company",game).position
         current_position = player_game.current_position
 
         if current_position < e_c_position
             current_position = e_c_position
-        else 
+        elsif current_position > e_c_position
             current_position = w_w_position
         end 
+        player_game.save 
         return true 
 
         
     end 
 
     def nearest_railroad(game, player_game)
-        #Advance token to the nearest Railroad and pay owner twice 
-        #the rental to which he/she is otherwise entitled.
-        #If Railroad is unowned, you may buy it from the Bank.
+        #does this need to be gamespace?
 
-        rr_position = Space.find_by_name("Reading Railroad", game)
-        pr_position = Space.find_by_name("Pennsylvania Railroad", game)
-        bor_position = Space.find_by_name("B. & O. Railroad", game)
-        slr_position = Space.find_by_name("Short Line R.R", game)
+        rr_position = Space.find_by_name("Reading Railroad", game).position
+        pr_position = Space.find_by_name("Pennsylvania Railroad", game).position
+        bor_position = Space.find_by_name("B. & O. Railroad", game).position
+        slr_position = Space.find_by_name("Short Line R.R", game).position
         current_position = player_game.current_position
 
-        if current_position < rr_position.position && pr_position && bor_position && slr_position
-            current_position = rr_position
-        elsif current_position < pr_position && bor_position && slr_position
+        if current_position > rr_position && pr_position && bor_position && slr_position
+            current_position = [rr_position,pr_position,bor_position,slr_position].min 
+        elsif current_position < pr_position && bor_position && slr_position && slr_position
             current_position = pr_position
         elsif current_position < bor_position && slr_position
             current_position = bor_position
         else 
             current_position = slr_position
         end
+        player_game.save 
         return true 
     end 
 
-    def collect_twohun(player_game)
+    def collect_twohun(game,player_game)
         player_game.money += 200
         player_game.save 
+        return nil 
     end 
 
-    def collect_onehun(player_game)
+    def collect_onehun(game,player_game)
         player_game.money += 100
         player_game.save 
+        return nil
     end 
 
-    def collect_onehunfifty(player_game)
+    def collect_onehunfifty(game,player_game)
         player_game.money += 150
         player_game.save 
+        return nil
     end 
 
-    def collect_fifty(player_game)
+    def collect_fifty(game,player_game)
         player_game.money += 50
         player_game.save 
+        return nil
     end 
 
-    def collect_twenty_five(player_game)
-        player_game.money += 50
+    def collect_twenty_five(game,player_game)
+        player_game.money += 25
         player_game.save 
+        return nil
     end 
 
-    def collect_twenty(player_game)
-        player_game.money += 50
+    def collect_twenty(game,player_game)
+        player_game.money += 20
         player_game.save 
         return nil 
     end 
@@ -204,7 +220,7 @@ class Card < ApplicationRecord
         return nil
     end 
 
-    def collect_fifty_from_all(player_game)
+    def collect_fifty_from_all(game,player_game)
         all = player_game.game.players.count * 50
         player_game.money += all 
         player_game.save 
@@ -213,10 +229,10 @@ class Card < ApplicationRecord
             pg.take_money_away(50)
             pg.save 
         end 
-        
+        return nil
     end 
 
-    def collect_ten_from_all(player_game)
+    def collect_ten_from_all(game,player_game)
         all = player_game.game.players.count * 10
         player_game.money += all 
         player_game.save 
@@ -225,10 +241,11 @@ class Card < ApplicationRecord
             pg.take_money_away(10)
             pg.save 
         end 
+        return nil
     end 
 
 
-    def pay_fifty_to_all(player_game)
+    def pay_fifty_to_all(game,player_game)
         #need logic to give 50 to each player 
         PlayerGame.all.each do |pg|
             if pg.id != player_game.id
@@ -240,12 +257,14 @@ class Card < ApplicationRecord
                 end 
             end 
         end 
+        return nil
     end 
     
-    def repairs(player_game)
+    def repairs(game,player_game)
         all = player_game.player.properties.count * 25
         player_game.take_money_away(all)
         player_game.save 
+        return nil
 
     end 
     
@@ -258,9 +277,10 @@ class Card < ApplicationRecord
     end 
 
     
-    def pay_fifty(player_game)
+    def pay_fifty(game,player_game) 
         player_game.take_money_away(50)
         player_game.save 
+        return nil
     end 
 
     def pay_fifteen(game, player_game)
@@ -271,9 +291,10 @@ class Card < ApplicationRecord
     end 
 
     
-    def get_out_of_jail(player_game)
+    def get_out_of_jail(game,player_game)
         player_game.has_get_out_of_jail_card = true 
         player_game.save 
+        return nil
     end 
 
     def go_to_jail(game, player_game)
@@ -289,20 +310,20 @@ class Card < ApplicationRecord
 
     #bonus section 
 
-    def super_good
+    def super_good(game,player_game)
         Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 41, method_name: "super_good")
         Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 42, method_name: "super_good")
         Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 43, method_name: "super_good")
         Space.create!(space_name: 'Super Good', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 44, method_name: "super_good")
-
+        return nil
     end 
 
-    def super_bad
+    def super_bad(game,player_game)
         Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 41, method_name: "super_bad")
         Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 42, method_name: "super_bad")
         Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 43, method_name: "super_bad")
         Space.create!(space_name: 'Super Bad', space_cost: nil, rent_level1: nil,group: nil,space_type:"bonus", default_position: 44, method_name: "super_bad")
-
+        return nil
     end 
 
 

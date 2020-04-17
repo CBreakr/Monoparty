@@ -122,7 +122,7 @@ class Game < ApplicationRecord
         result = []
 
         gs = current_game_space(current_player_game.current_position)
-
+        byebug
         result.push({space: gs.space.space_name})
 
         if (gs.space.is_card? && gs.space.method_name)

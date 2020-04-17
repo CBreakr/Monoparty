@@ -27,19 +27,18 @@ class Space < ApplicationRecord
     end
 
     def self.get_go_position(game)
-        go_space = game.game_spaces.find_by {|gs| gs.space.space_name == 'Go' }
+        go_space = game.game_spaces.find {|gs| gs.space.space_name == 'Go' }
         go_space.position 
     end 
 
     def self.find_by_name(name,game)
-        byebug
         game.game_spaces.find {|gs| gs.space.space_name == name}
     end 
 
     def self.does_pass_go?(name,game,player_game)
-        target_position = Space.find_by_name(name,game)
+        target_position = Space.find_by_name(name,game).position
         go_position = Space.get_go_position(game)
-        player_pos = player_game.current_position 
+        player_pos = player_game.current_position
         
         if player_pos < target_position && go_position > player_pos && go_position < target_position
             return true 
