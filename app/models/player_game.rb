@@ -30,4 +30,29 @@ class PlayerGame < ApplicationRecord
     
         return amount_returned
     end
+
+    def sell_property(sell_params)
+        PlayerGame.transaction do
+            total = 0
+            sell_params[:sold_property_ids].each do |spid|
+                if spid.present? then
+                    p = Property.find(spid)
+                    total += p.space.space_cost
+                    p.destroy
+                end
+            end
+            self.update(money: self.money + total)
+            self.game.end_the_turn(nil)
+        end
+    end
+
+    def sold_property_ids
+        []
+    end
+
+    def properties
+        Property.all.filter do |prop|
+            prop.player_id == self.player_id && prop.game_id == self.game_id
+        end
+    end
 end

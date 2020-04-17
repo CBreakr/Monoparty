@@ -10,6 +10,7 @@ class GamesController < ApplicationController
         if @game.is_finished then
             render :finished_game        
         elsif @game.is_started then
+            @current_player_game = @game.get_current_player_game
             render :active_game
         else
             @players_not_in_game = Player.all.filter do |p|
@@ -49,9 +50,6 @@ class GamesController < ApplicationController
         if @game.is_active then
             first_roll = rand 1..6
             second_roll = rand 1..6
-
-            session[:first_roll] = first_roll
-            session[:second_roll] = second_roll
 
             result_hash = @game.evaluate_roll(first_roll, second_roll)
 
@@ -99,9 +97,13 @@ class GamesController < ApplicationController
         result_hash && result_hash.any? {|result| result.has_key?(:turn_end) }
     end
 
+    def check_results_for_sell(result_hash)
+        result_hash && result_hash.any? {|result| result.has_key?(:sell) }
+    end
+
     def after_actions(result_hash)
         #if the turn is already over, just end it
-        if !check_results_for_actions(result_hash) && !check_results_for_turn_end(result_hash) then
+        if !check_results_for_actions(result_hash) && !check_results_for_turn_end(result_hash) && !check_results_for_sell(result_hash) then
             sell_options = @game.set_sell_options
             if sell_options then
                 if result_hash then

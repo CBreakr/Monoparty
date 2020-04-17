@@ -40,10 +40,12 @@ body {
 
 input[type="submit"] {
     transition: background-color 0.3s;
-    padding: 4px 8px;
-    margin: 4px;
-    border: 1px solid black;
+    padding: 6px 10px;
+    margin: 6px;
+    border: 2px solid black;
+    border-radius: 5px;
     background-color: #ddd;
+    font-weight: 500;
 }
 
 input[type="submit"]:hover {
@@ -74,4 +76,28 @@ input[type="submit"]:hover {
 
 .attribution {
     font-size: 8px;
+}
+
+.dice {
+    width: 4vh;
+    height: 4vh;
+}
+
+.space_landed {
+    font-size: 18px;
+    margin: 10px;
+}
+
+.card_drawn {
+    font-size: 18px;
+    margin: 10px;
+}
+
+.actions {
+    margin: 10px;
+}
+
+.current_player {
+    font-size: 20px;
+    margin: 8px;
 }

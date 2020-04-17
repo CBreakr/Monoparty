@@ -3,6 +3,10 @@ class Property < ApplicationRecord
     belongs_to :space 
     belongs_to :game
 
+    def sale_detail
+        "#{self.space.space_name} for $#{self.space.space_cost}"
+    end
+
     def pay_rent(player_game)
         # for now just take the first level
         if player_game.player_id != self.player_id then

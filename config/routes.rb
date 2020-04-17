@@ -15,4 +15,6 @@ Rails.application.routes.draw do
   post "/games/:id/roll_dice", to: "games#roll", as: "roll_dice"
   post "/games/:id/game_action", to: "games#game_action", as: "game_action"
   post "/games/:id/skip", to: "games#skip", as: "skip"
+
+  patch "/player_games/:id/selling", to: "player_games#sell_property", as: "selling"
 end

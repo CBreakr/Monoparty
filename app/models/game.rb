@@ -271,12 +271,7 @@ class Game < ApplicationRecord
     end
 
     def choose_to_sell_property(inner_params)
-        byebug
-
-        # list out the properties to sell
-        # really, we need to display a form
-
-        return nil
+        return [{sell: true}]
     end
 
     def end_the_turn(inner_params)
