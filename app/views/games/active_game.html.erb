@@ -17,6 +17,8 @@ with info panels for the different players
 
 <% scale_factor = 40.0/sorted_spaces.count %>
 
+<% dice=["dice-six-faces-one.svg", "dice-six-faces-two.svg", "dice-six-faces-three.svg", "dice-six-faces-four.svg", "dice-six-faces-five.svg", "dice-six-faces-six.svg"] %>
+
 <div class="game_container">
     <div class="board_container">
         <table border="3" cellspacing="0" cellpadding="3" style="text-align:center;font:normal 8pt/9pt arial;width:90vh;border-collapse:separate; background-color:#F0FFF0;">
@@ -40,26 +42,71 @@ with info panels for the different players
                 <tr>
                     <%= render partial: "spaces/display_space_cell", locals: {game: @game, gs: display_spaces[count-1], border_side: "right", size_style: "height:6.5vh;"} %>
                     <% count += 1 %>
-                    <td colspan="<%= side_length-2 %>" rowspan="<%= side_length-2 %>">                    
-                        <% if flash[:first_roll] then %>
-                            <div>First: <%= flash[:first_roll] %>, Second: <%= flash[:second_roll] %></div>
-                        <% end %>
-                        <% if flash[:result] then %>
-                            <% flash[:result].each do |result| %>
-                                <% if result && result.is_a?(Hash) && result.has_key?("space") then %>
-                                    <div>
-                                        <%= result["space"] %>
+
+                    <td colspan="<%= side_length-2 %>" rowspan="<%= side_length-2 %>">
+                        <% if flash[:results] then %>
+                            <%# flash[:results] %>
+                            <% flash[:results].each do |result| %>
+                                <% if result.has_key?("first_roll") %>
+                                    <%= inline_svg_tag dice[result["first_roll"]-1], class: 'dice' %>
+                                <% end %>
+
+                                <% if result.has_key?("second_roll") %>
+                                    <%= inline_svg_tag dice[result["second_roll"]-1], class: 'dice' %>
+                                <% end %>
+
+                                <% if result.has_key?("space") then %>
+                                    <div class="space_landed">
+                                        Player Landed On: <%= result["space"] %>
                                     </div>
                                 <% end %>
 
-                                <% if result && result.is_a?(Hash) && result.has_key?("card") %>
-                                    <div>
-                                        <%= result["card"] %>
+                                <% if result.has_key?("card") %>
+                                    <div class="card_drawn">
+                                        Player drew card: <%= result["card"] %>
                                     </div>
-                                <% end %>                          
+                                <% end %>         
+
+                                <% if result.has_key?("loser") %>
+                                    <div>
+                                        <%= result["loser"] %>
+                                    </div>
+                                <% end %>
+
+                                <% if result.has_key?("rent") %>
+                                    <div>
+                                        <%= result["rent"] %>
+                                    </div>
+                                <% end %>
+
+                                <% if result.has_key?("message") %>
+                                    <div>
+                                        <%= result["message"] %>
+                                    </div>
+                                <% end %>
+
+                                <% if result.has_key?("actions") %>
+                                    <div class = "actions">
+                                        <% result["actions"].each do |action| %>
+                                            <%= button_to action["text"], game_action_path(@game), params: {inner: action["params"], method_name: action["method_name"]} %>
+                                        <% end %>
+                                    </div>
+                                <% end %>
+
+                                <% if result.has_key?("sell") %>
+                                    <div class = "actions">
+                                        <%= render partial: "selling", locals: {player_game: @current_player_game} %>
+                                        <%= button_to "End the Turn", game_action_path(@game), params: {inner: {}, method_name: "end_the_turn"} %>
+                                    </div>
+                                <% end %>
                             <% end %>  
+                        <% else %>
+                            <div class="current_player">
+                                Your Turn, <%= @current_player_game.player.player_name %>
+                            </div>
+                            <br/>
+                            <%= button_to "Roll Dice", roll_dice_path(@game) %>
                         <% end %>
-                        <%= button_to "Roll Dice", roll_dice_path(@game) %>
                     </td>
                     <%= render partial: "spaces/display_space_cell", locals: {game: @game, gs: display_spaces[count-1], border_side: "left", size_style: "height:6.5vh;"} %>
                     <% count += 1 %>
@@ -94,15 +141,26 @@ with info panels for the different players
         </p>
 
         <% @game.sorted_player_games.each do |pg| %>
-            <p class = "distinct" style="border-left: 10px solid <%= pg.color %>;<%= pg.has_conceded ? "opacity: 0.2;" : "" %><%= pg.is_current_turn ? "color:purple;" : "" %>">
-                <%= pg.player.player_name %>
-                <br />
-                <%= pg.turn_order %>
-                <br />
-                $<%= pg.money %>
-                <br />
-                <%= pg.current_position%>
-            </p>
+            <div class="distinct" style="border-left: 20px solid <%= pg.color %>;<%= pg.has_conceded ? "opacity: 0.2;" : "" %><%= pg.is_current_turn ? "color:purple;" : "" %>">
+                <div class="individual_player_container">
+                    <div>
+                        <%= pg.player.player_name %>
+                        <br />
+                        $<%= pg.money %>
+                        <br />
+                        <% if pg.in_jail_rolls_remaining > 0 %>
+                            In Jail! (<%= pg.in_jail_rolls_remaining %> turns remaining)
+                        <% end %>
+                    </div>
+                    <div>
+                        <% pg.player.properties.filter do |prop|
+                            prop.game_id == @game.id
+                        end.each do |prop| %>
+                            <div><%= prop.space.space_name %> RENT: <%= prop.space.rent_level1 %></div>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
         <% end %>
     </div>
 </div>

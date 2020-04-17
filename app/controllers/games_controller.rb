@@ -10,6 +10,7 @@ class GamesController < ApplicationController
         if @game.is_finished then
             render :finished_game        
         elsif @game.is_started then
+            @current_player_game = @game.get_current_player_game
             render :active_game
         else
             @players_not_in_game = Player.all.filter do |p|
@@ -50,16 +51,12 @@ class GamesController < ApplicationController
             first_roll = rand 1..6
             second_roll = rand 1..6
 
-            session[:first_roll] = first_roll
-            session[:second_roll] = second_roll
+            result_hash = @game.evaluate_roll(first_roll, second_roll)
 
-            ret_hash = @game.evaluate_roll(first_roll, second_roll)
-            @game.save
-
-            flash.merge!(ret_hash)
+            after_actions(result_hash)
 
             # for now, for the purpose of testing
-            @game.end_the_turn
+            # @game.end_the_turn
         end
 
         redirect_to game_path(@game)
@@ -67,21 +64,17 @@ class GamesController < ApplicationController
 
     def game_action
         if @game.is_active then
-            @game.run_action(params[:action_name])
+            result_hash = @game.run_action(params)
+
+            after_actions(result_hash)
         end
+
         redirect_to game_path(@game)
     end
 
     def add_player
         if !game.is_started && !game.is_finished then
             @game.add_player(params[:player_id])
-        end
-        redirect_to game_path(@game)
-    end
-
-    def end_turn
-        if @game.is_active then
-            @game.end_the_turn
         end
         redirect_to game_path(@game)
     end
@@ -94,5 +87,35 @@ class GamesController < ApplicationController
 
     def get_game
         @game = Game.find(params[:id])
+    end
+
+    def check_results_for_actions(result_hash)
+        result_hash && result_hash.any? {|result| result.has_key?(:actions) }
+    end
+
+    def check_results_for_turn_end(result_hash)
+        result_hash && result_hash.any? {|result| result.has_key?(:turn_end) }
+    end
+
+    def check_results_for_sell(result_hash)
+        result_hash && result_hash.any? {|result| result.has_key?(:sell) }
+    end
+
+    def after_actions(result_hash)
+        #if the turn is already over, just end it
+        if !check_results_for_actions(result_hash) && !check_results_for_turn_end(result_hash) && !check_results_for_sell(result_hash) then
+            sell_options = @game.set_sell_options
+            if sell_options then
+                if result_hash then
+                    result_hash.push(sell_options)
+                else
+                    result_hash = [sell_options]
+                end
+            end
+        end
+
+        if result_hash != nil && result_hash.count > 0 && !check_results_for_turn_end(result_hash) then
+            flash[:results] = result_hash 
+        end
     end
 end

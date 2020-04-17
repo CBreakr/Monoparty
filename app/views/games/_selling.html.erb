@@ -1,0 +1,13 @@
+<%= form_for player_game, url: selling_path do |fb| %>
+    <%= fb.hidden_field :id %>
+
+    <%= fb.label :properties %>
+    <%= fb.collection_check_boxes :sold_property_ids, player_game.properties, :id, :sale_detail do |check_fb| %>
+        <p>
+            <%= check_fb.check_box %>
+            <%= check_fb.label %>
+        </p>
+    <% end %>
+
+    <%= fb.submit "Sell Properties" %>
+<% end %>

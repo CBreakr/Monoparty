@@ -26,5 +26,6 @@ class Player < ApplicationRecord
             amount_returned = player_game.money
             player_game.update(money: 0, has_conceded: true)
         end
+        return amount_returned
     end
 end
