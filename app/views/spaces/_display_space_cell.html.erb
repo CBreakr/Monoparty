@@ -1,8 +1,8 @@
 
 <% border_style = (gs.space.group ? "border-#{border_side}: 12px solid #{gs.space.group};" : "") %>
 
-<td style="<%= size_style %><%= border_style %>">
-    <div>
+<td style="<%= size_style %><%= border_style %>" class="has_hover">
+    <div class="has_hover">
         <%= gs.space.space_name %>
         <br />
         <% game.player_games.each do |pg| %>
@@ -11,6 +11,32 @@
                     <%= pg.turn_order %>
                 </span>
             <% end%>
+        <% end %>
+        <% if gs.space.is_property? %>
+            <% hidden_hover_class = "hidden_hover_right" %>
+            <% if border_side == "top" then %>
+            <% hidden_hover_class = "hidden_hover_up" %>
+            <% elsif border_side == "bottom" then %>
+            <% hidden_hover_class = "hidden_hover_down" %>
+            <% end %>
+
+            <div class="hidden_hover <%= hidden_hover_class %>">
+                <div>
+                    Name: <%= gs.space.space_name %>
+                </div>
+                <div>
+                    Cost: $<%= gs.space.space_cost %>
+                </div>
+                <div>
+                    Rent: $<%= gs.space.rent_level1 %>
+                </div>
+                <% property = Property.all.find {|p| p.space_id == gs.space_id && p.game_id == gs.game_id } %>
+                <% if property %>
+                <div>
+                    Owned By: <%= property.owner.player.player_name %>
+                </div>
+                <% end %>
+            </div>
         <% end %>
     </div>
 </td>

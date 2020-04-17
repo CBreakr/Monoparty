@@ -5,17 +5,14 @@ class Card < ApplicationRecord
     def self.run_from_space(game, game_space, player_game)
         # byebug
         next_card = get_next_card(game, game_space.space.space_type)
-        byebug
+        
         if next_card then
             #do a test for now
             result = nil
             Card.transaction do
-                byebug 
                 result = next_card.card.run_own_method(game, player_game)
-                byebug
                 next_card.is_used = true
                 next_card.save!
-                byebug
             end
             return {card: next_card.card.card_name, card_result: result}
         end
@@ -44,7 +41,6 @@ class Card < ApplicationRecord
 
     # I think the game and player_game should be enough for any action
     def run_own_method(game, player_game)
-        byebug
         if self.respond_to?(method_name) then
             return self.send(method_name, game, player_game)
         end
@@ -94,14 +90,10 @@ class Card < ApplicationRecord
 
     def advance_to_boardwalk(game, player_game)
         #comparison of Integer with GameSpace failed
-        byebug
         boardwalk_position = Space.find_by_name("Boardwalk",game).position 
         if Space.does_pass_go?("Boardwalk",game,player_game)
-            byebug
             player_game.money += 200 
         end 
-
-        byebug
 
         player_game.current_position = boardwalk_position
         player_game.save 
@@ -124,17 +116,14 @@ class Card < ApplicationRecord
 
     def advance_to_st_charles_place(game, player_game)
         #need if you pass go collect 200 logic 
-        st_charles_place_position = Space.find_by_name("St. Charles Place",game).position 
-        byebug 
+        st_charles_place_position = Space.find_by_name("St. Charles Place",game).position  
         if Space.does_pass_go?("St. Charles Place",game,player_game)
             player_game.money += 200 
-        end 
-        byebug 
+        end  
 
         player_game.current_position = st_charles_place_position 
         player_game.save 
         return true 
-        
     end 
 
     def nearest_utility(game, player_game)
@@ -144,15 +133,27 @@ class Card < ApplicationRecord
         e_c_position = Space.find_by_name("Electric Company",game).position
         current_position = player_game.current_position
 
-        if current_position < e_c_position
-            current_position = e_c_position
-        elsif current_position > e_c_position
-            current_position = w_w_position
-        end 
+        ww_distance = w_w_position - current_position
+        ec_distance = e_c_position - current_position
+
+        # if both are > 0 or both are < 0, take the smallest
+        # if one is > 0, take that one
+
+        target_position = nil
+
+        if ww_distance * ec_distance > 0 then
+            target_position = [w_w_position, e_c_position].min
+        else
+            target_position = [w_w_position, e_c_position].max
+        end
+
+        if Space.does_pass_go_by_position?(target_position, game, player_game) then
+            player_game.money += 200
+        end
+
+        player_game.current_position = target_position
         player_game.save 
         return true 
-
-        
     end 
 
     def nearest_railroad(game, player_game)
@@ -164,15 +165,42 @@ class Card < ApplicationRecord
         slr_position = Space.find_by_name("Short Line R.R", game).position
         current_position = player_game.current_position
 
-        if current_position > rr_position && pr_position && bor_position && slr_position
-            current_position = [rr_position,pr_position,bor_position,slr_position].min 
-        elsif current_position < pr_position && bor_position && slr_position && slr_position
-            current_position = pr_position
-        elsif current_position < bor_position && slr_position
-            current_position = bor_position
-        else 
-            current_position = slr_position
+        # if all after current, take lowest
+        # if all before current, take lowest
+
+        # else take the lowest of those which is greater than current
+        target_position = nil
+
+        if rr_position < current_position && pr_position < current_position && bor_position < current_position && slr_position < current_position then
+            target_position = [rr_position, pr_position, bor_position, slr_position].min 
         end
+
+        if !target_position then
+            target_position = 10000
+
+            if rr_position > current_position && rr_position < target_position then
+                target_position = rr_position
+            end
+
+            if pr_position > current_position && pr_position < target_position then
+                target_position = pr_position
+            end
+
+            if bor_position > current_position && bor_position < target_position then
+                target_position = bor_position
+            end
+
+            if slr_position > current_position && slr_position < target_position then
+                target_position = slr_position
+            end
+        end
+
+        if Space.does_pass_go_by_position?(target_position, game, player_game) then
+            player_game.money += 200
+        end
+        
+        player_game.current_position = target_position
+
         player_game.save 
         return true 
     end 
@@ -213,34 +241,34 @@ class Card < ApplicationRecord
         return nil 
     end 
 
-    def collect_ten(game,player_game)
-        byebug 
+    def collect_ten(game,player_game) 
         player_game.money += 10
         player_game.save 
         return nil
     end 
 
     def collect_fifty_from_all(game,player_game)
-        all = player_game.game.players.count * 50
-        player_game.money += all 
-        player_game.save 
         #need logic to take what a losing player has left 
+        total = 0
         PlayerGame.all.each do |pg|
-            pg.take_money_away(50)
-            pg.save 
+            total + pg.take_money_away(50)
         end 
+        
+        player_game.money += total 
+        player_game.save 
+        
         return nil
     end 
 
     def collect_ten_from_all(game,player_game)
-        all = player_game.game.players.count * 10
-        player_game.money += all 
-        player_game.save 
-        #need logic to take what a losing player has left 
+        total = 0
         PlayerGame.all.each do |pg|
-            pg.take_money_away(10)
-            pg.save 
+            total + pg.take_money_away(10)
         end 
+        
+        player_game.money += total 
+        player_game.save 
+        
         return nil
     end 
 
@@ -263,7 +291,6 @@ class Card < ApplicationRecord
     def repairs(game,player_game)
         all = player_game.player.properties.count * 25
         player_game.take_money_away(all)
-        player_game.save 
         return nil
 
     end 
@@ -272,21 +299,17 @@ class Card < ApplicationRecord
         byebug
         p_cost = player_game.player.properties.count * 40
         player_game.take_money_away(p_cost)
-        player_game.save 
         return nil
     end 
 
     
     def pay_fifty(game,player_game) 
         player_game.take_money_away(50)
-        player_game.save 
         return nil
     end 
 
     def pay_fifteen(game, player_game)
-        byebug
         player_game.take_money_away(15)
-        player_game.save 
         return nil
     end 
 
@@ -299,8 +322,7 @@ class Card < ApplicationRecord
 
     def go_to_jail(game, player_game)
         #need help with logic 
-        #set jail space set player position to it set rolls remaining = 3
-        byebug 
+        #set jail space set player position to it set rolls remaining = 3 
         jail_space = Space.find_by_name("In Jail/Just Visiting",game)
         player_game.current_position = jail_space.position  
         player_game.in_jail_rolls_remaining = 3

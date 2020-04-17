@@ -109,3 +109,50 @@ input[type="submit"]:hover {
     margin: 4px;
     padding: 4px;
 }
+
+.has_hover {
+    position: relative;    
+    transition: background-color 0.2s;
+}
+
+.hidden_hover {
+    visibility: hidden;
+    position: absolute;    
+    z-index: 1;
+
+    /* display: inline-block; */
+    width: 150px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;    
+    font-size: 13px;
+}
+
+.hidden_hover_down {
+    left: 20%;
+    top: 9vh;
+}
+
+.hidden_hover_up {
+    left: 20%;
+    top: -20vh;
+}
+
+.hidden_hover_right {
+    left: 115%;
+    top: 0vh;
+}
+
+.hidden_hover div {
+    margin: 8px;
+}
+
+.has_hover:hover {
+    background-color: lightgreen;
+}
+
+.has_hover:hover .hidden_hover {
+    visibility: visible;
+}

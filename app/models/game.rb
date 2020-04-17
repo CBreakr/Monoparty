@@ -127,11 +127,17 @@ class Game < ApplicationRecord
             next_position = self.spaces.count
         end
 
+        if Space.does_pass_go_by_position?(next_position, self, current_player_game) then
+            current_player_game.money += 200            
+        end
+
         current_player_game.current_position = next_position
+        current_player_game.save
 
         # targetted testing
         # Space.advance_to_space("Go To Jail", self, current_player_game)
-
+        # Space.advance_to_space("Chance", self, current_player_game)
+        
         result = evaluate_space(current_player_game)
         return result
     end
@@ -149,24 +155,19 @@ class Game < ApplicationRecord
         if (gs.space.is_card? && gs.space.method_name)
             puts "EVALUATE CARD SPACE"
 
-            #no cards for now, just spaces
-            return result
+            # #no cards for now, just spaces
+            # return result
 
             last_result = Card.run_from_space(self, gs, current_player_game)
             result.push(last_result)
 
-            byebug
-
             if (last_result && last_result[:card_result]) then
                 #this mean we're supposed to re-evaluate again     
 
-                byebug
-
                 next_gs = current_game_space(current_player_game.current_position)
                 # make extra sure we're not on the same spot, to avoid a loop
-                byebug 
+                
                 if gs.id != next_gs.id then
-                    byebug
                     next_result = evaluate_space(current_player_game)
                     result.push(next_result) if next_result
                 end

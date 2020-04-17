@@ -151,6 +151,9 @@ with info panels for the different players
                         <% if pg.in_jail_rolls_remaining > 0 %>
                             In Jail! (<%= pg.in_jail_rolls_remaining %> turns remaining)
                         <% end %>
+                        <% if pg.has_get_out_of_jail_card %>
+                            Get Out Free
+                        <% end %>
                     </div>
                     <div>
                         <% pg.player.properties.filter do |prop|
