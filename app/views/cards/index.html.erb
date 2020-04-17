@@ -1,5 +1,9 @@
 <h1>All Cards</h1>
 
+<div class="cards_container">
 <%@cards.each do |card|%>
-    <br><%=link_to card.card_name, card_path(card)%></br>
+    <div class="card">
+    <%=link_to card.card_name, card_path(card)%>
+    </div>
 <%end%> 
+</div>

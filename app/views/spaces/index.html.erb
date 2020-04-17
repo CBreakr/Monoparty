@@ -1,10 +1,10 @@
 <h1>All Spaces</h1>
 
-<div class="cards_container">
+<div class="spaces_container">
 <%@spaces.each do |space|%>
-    <% type_color_style = "" %>
-    <% type_color_style = "background-color: orange;" if space.space_type == "chance" %>
-    <div class="card" style="<%= type_color_style %>">
+    <%# type_color_style = "" %>
+    <%# type_color_style = "background-color: orange;" if space.space_type == "chance" %>
+    <div class="card" style="<%# type_color_style %>">
         <%=link_to space.space_name, space_path(space)%>
     </div>
 <%end%> 

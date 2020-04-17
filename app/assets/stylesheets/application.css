@@ -100,14 +100,37 @@ input[type="submit"]:hover {
 .cards_container {
     display: grid;
 
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 8px;
 }
 
 .card {
-    border: 1px solid black;
+    width: 200px;
+    border: 2px solid black;
     margin: 4px;
     padding: 4px;
+    background: #F0FFF0;
+}
+
+.spaces_container {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 8px;
+}
+
+.space {
+    width: 200px;
+    border: 2px solid black;
+    margin: 4px;
+    padding: 4px;
+    background: #F0FFF0;
+}
+
+.card a, .space a {
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: black;
 }
 
 .has_hover {
