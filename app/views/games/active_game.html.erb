@@ -68,19 +68,19 @@ with info panels for the different players
                                 <% end %>         
 
                                 <% if result.has_key?("loser") %>
-                                    <div>
+                                    <div class="loser">
                                         <%= result["loser"] %>
                                     </div>
                                 <% end %>
 
                                 <% if result.has_key?("rent") %>
-                                    <div>
+                                    <div class="rent">
                                         <%= result["rent"] %>
                                     </div>
                                 <% end %>
 
                                 <% if result.has_key?("message") %>
-                                    <div>
+                                    <div class="message">
                                         <%= result["message"] %>
                                     </div>
                                 <% end %>

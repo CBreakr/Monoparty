@@ -129,7 +129,8 @@ class Game < ApplicationRecord
 
         current_player_game.current_position = next_position
 
-        # Space.advance_to_card(self, current_player_game)
+        # targetted testing
+        # Space.advance_to_space("Go To Jail", self, current_player_game)
 
         result = evaluate_space(current_player_game)
         return result
@@ -142,7 +143,7 @@ class Game < ApplicationRecord
         result = []
 
         gs = current_game_space(current_player_game.current_position)
-        byebug
+        
         result.push({space: gs.space.space_name})
 
         if (gs.space.is_card? && gs.space.method_name)

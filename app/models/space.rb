@@ -61,7 +61,6 @@ class Space < ApplicationRecord
                 return nil
             end
         else
-            byebug
             return run_own_method(game, player_game)
         end
     end
@@ -84,6 +83,10 @@ class Space < ApplicationRecord
 
     def self.does_pass_go?(name,game,player_game)
         target_position = Space.find_by_name(name,game).position
+        does_pass_go_by_position?(target_position, game, player_game)
+    end 
+
+    def self.does_pass_go_by_position?(target_position, game, player_game)
         go_position = Space.get_go_position(game)
         player_pos = player_game.current_position
         
@@ -95,10 +98,10 @@ class Space < ApplicationRecord
             return true 
         end 
         return false 
-    end 
+    end
 
     def self.advance_to_space(name,game,player_game)
-        target_position = Space.find_by_name(name,game)
+        target_position = Space.find_by_name(name,game).position
         if does_pass_go?(name,game,player_game)
             player_game.money += 200 
         end 
@@ -141,18 +144,17 @@ class Space < ApplicationRecord
 
     def go_to_jail(game, player_game)
         #need help with logic 
-        #set jail space set player position to it set rolls remaining = 3
-        byebug 
+        #set jail space set player position to it set rolls remaining = 3 
         jail_space = Space.find_by_name("In Jail/Just Visiting",game)
         player_game.current_position = jail_space.position  
         player_game.in_jail_rolls_remaining = 3
         player_game.save 
-        return true 
+        return {evaluation: "Go to Jail!"}
     end 
 
     def can_purchase?(player_game)
         #check if it's not already owned and if the player has enough money
-        byebug
+        
         match = self.properties.find do |p|
             p.game_id == player_game.game_id
         end

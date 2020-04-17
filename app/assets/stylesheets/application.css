@@ -83,12 +83,7 @@ input[type="submit"]:hover {
     height: 4vh;
 }
 
-.space_landed {
-    font-size: 18px;
-    margin: 10px;
-}
-
-.card_drawn {
+.space_landed, .card-drawn, .loser, .rent, .message {
     font-size: 18px;
     margin: 10px;
 }
@@ -100,4 +95,17 @@ input[type="submit"]:hover {
 .current_player {
     font-size: 20px;
     margin: 8px;
+}
+
+.cards_container {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 8px;
+}
+
+.card {
+    border: 1px solid black;
+    margin: 4px;
+    padding: 4px;
 }
